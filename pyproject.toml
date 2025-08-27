@@ -1,0 +1,7 @@
+[project]
+name = "quotes-project"
+version = "0.1.0"
+description = "Quotes for every day!"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
