@@ -4,4 +4,9 @@ version = "0.1.0"
 description = "Quotes for every day!"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "django>=5.2.5",
+]
+
+[dependency-groups]
+dev = []
