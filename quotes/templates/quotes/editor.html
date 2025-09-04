@@ -1,0 +1,67 @@
+{% extends "quotes/base.html" %} {% block title %}Цитаты - Редактор{% endblock %}
+{% load static %}
+{% block content %}
+<div class="content-container">
+    <h1>Редактор цитат</h1>
+    <div>
+        <button class="btn" onclick="addQuote()">Добавить цитату</button>
+        <br>
+        <ul style="list-style-type: none;margin-top: 2rem;">
+            {% for quote in quotes %}
+                <li style="margin-bottom: 2rem;">
+                    <div id="quote_{{ quote.id }}">
+                        <p style="text-align: left; margin: 0.5rem; font-size: 1rem">
+                            ID: {{ quote.id }} | Источник: {{ quote.source }} | Вес: {{ quote.weight }}
+                            <button onclick="editQuote({{ quote.id }})" class="btn-sml">Изменить</button><button class="btn-sml" onclick="deleteQuote({{ quote.id }})">Удалить</button>
+                        </p>
+                        
+                        <blockquote
+                            style="
+                                border: white solid 0.1rem;
+                                border-radius: 1rem;
+                                padding: 1.5rem;
+                                backdrop-filter: blur(2rem);
+                            "
+                        >
+                            <p style="font-size: 1.5rem; margin-bottom: 1rem">
+                                <i>„{{ quote.text }}“</i>
+                            </p>
+                            <p style="text-align: right; margin-bottom: 0; opacity: 0.5">
+                                — {{ quote.attribution }}
+                            </p>
+                        </blockquote>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div style="margin-top: 1rem">
+            <a style="color: white; text-decoration: none" href="/"
+                >Вернуться на главную</a
+            >
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2 id="popupTitle">Popup Title</h2>
+            <br>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn-sml" type="submit">Сохранить</button>
+            </form>
+            <br>
+            <button id="closePopup" class="btn-sml">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'quotes/scripts/editor.js' %}"></script>
+
+{% if show_form %}
+<script>
+    showPopup("{{ form_title }}");
+</script>
+{% endif %}
+{% endblock %}

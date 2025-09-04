@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>{% block title %}Цитаты{% endblock %}</title>
+        <meta name="description" content="Quotes for every day!" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{% static 'quotes/styles/main.css' %}" />
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    </head>
+    <body>
+        <div class="gradient-background">
+            <div class="gradient-sphere sphere-1"></div>
+            <div class="gradient-sphere sphere-2"></div>
+            <div class="gradient-sphere sphere-3"></div>
+            <div class="glow"></div>
+            <div class="grid-overlay"></div>
+            <div class="noise-overlay"></div>
+            <div class="particles-container" id="particles-container"></div>
+        </div>
+
+        {% block content %}{% endblock %}
+
+        <script src="{% static 'quotes/scripts/animated_bg.js' %}"></script>
+    </body>
+</html>

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Source, Quote, QuoteReaction
+from .models import Quote, QuoteReaction
 
-admin.site.register(Source)
+
 admin.site.register(Quote)
 admin.site.register(QuoteReaction)

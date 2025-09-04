@@ -1,6 +1,7 @@
 // Create particle effect
 const particlesContainer = document.getElementById("particles-container");
 const particleCount = 80;
+const maxParticleCount = 500;
 
 // Create particles
 for (let i = 0; i < particleCount; i++) {
@@ -69,6 +70,9 @@ function animateParticle(particle) {
 
 // Mouse interaction
 document.addEventListener("mousemove", (e) => {
+    if (particlesContainer.children.length >= maxParticleCount)
+        return;
+    
     // Create particles at mouse position
     const mouseX = (e.clientX / window.innerWidth) * 100;
     const mouseY = (e.clientY / window.innerHeight) * 100;
@@ -91,7 +95,7 @@ document.addEventListener("mousemove", (e) => {
 
     // Animate outward
     setTimeout(() => {
-        particle.style.transition = "all 2s ease-out";
+        particle.style.transition = "all 1s ease-out";
         particle.style.left = `${mouseX + (Math.random() * 10 - 5)}%`;
         particle.style.top = `${mouseY + (Math.random() * 10 - 5)}%`;
         particle.style.opacity = "0";
@@ -99,7 +103,7 @@ document.addEventListener("mousemove", (e) => {
         // Remove after animation
         setTimeout(() => {
             particle.remove();
-        }, 2000);
+        }, 1000);
     }, 10);
 
     // Subtle movement of gradient spheres

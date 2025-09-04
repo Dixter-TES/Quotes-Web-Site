@@ -1,17 +1,27 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-
-class Source(models.Model):
-    name = models.CharField(max_length=50)
+from django.forms import ValidationError
 
 
 class Quote(models.Model):
-    source = models.ForeignKey(Source, on_delete=models.CASCADE)
+    source = models.CharField(max_length=150)
 
     text = models.CharField(max_length=500, unique=True)
     attribution = models.CharField(max_length=150, null=True)
     weight = models.PositiveSmallIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(1000)])
+    
+    def likes_count(self):
+        return self.reactions.filter(type=QuoteReaction.LIKE).count()
+    
+    def dislikes_count(self):
+         return self.reactions.filter(type=QuoteReaction.DISLIKE).count()
+     
+    def clean(self):
+        if Quote.objects.filter(source=self.source).exclude(id=self.id).count() >= 3:
+            raise ValidationError(f'У источника "{self.source}" уже есть 3 цитаты')
+     
+    def __str__(self):
+        return f"{self.source} | {self.text} | {self.attribution}"
 
 
 class QuoteReaction(models.Model):
@@ -33,6 +43,9 @@ class QuoteReaction(models.Model):
     unique_quote_user_uuid = models.UniqueConstraint(
         "quote", "user_uuid", name="unique_quote_user_uuid"
     )
+    
+    def __str__(self):
+        return f"{self.type} | {self.quote.id}:{self.quote.text}"
 
 
 class Statistics(models.Model):

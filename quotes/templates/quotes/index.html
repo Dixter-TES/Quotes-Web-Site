@@ -1,122 +1,158 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Цитаты</title>
-        <meta name="description" content="Quotes for every day!" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="{% static 'quotes/styles/main.css' %}" />
-
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    </head>
-    <body>
-        <h1 class="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-        <div class="gradient-background">
-            <div class="gradient-sphere sphere-1"></div>
-            <div class="gradient-sphere sphere-2"></div>
-            <div class="gradient-sphere sphere-3"></div>
-            <div class="glow"></div>
-            <div class="grid-overlay"></div>
-            <div class="noise-overlay"></div>
-            <div class="particles-container" id="particles-container"></div>
-        </div>
-
-        <div class="content-container">
-            <h1 id="question">Какая цитата вдохновит вас сегодня?</h1>
-            <div id="quote">
-                {% if not quote %}
-                <p>
-                    Цитат пока нет. Пожалуйста, добавьте первую цитату через
-                    админ-панель.
-                </p>
-                {% else %}
-                <p style="text-align: left; margin: 0.5rem; font-size: 1rem">
-                    Источник: {{ quote.source.name }}
-                </p>
-                <blockquote
-                    style="
-                        border: white solid 0.1rem;
-                        border-radius: 1rem;
-                        padding: 1.5rem;
-                        backdrop-filter: blur(2rem);
-                    "
-                >
-                    <p style="font-size: 1.5rem; margin-bottom: 1rem">
-                        <i>„{{ quote.text }}“</i>
-                    </p>
-                    <p
-                        style="
-                            text-align: right;
-                            margin-bottom: 0;
-                            opacity: 0.5;
-                        "
-                    >
-                        — {{ quote.attribution }}
-                    </p>
-                </blockquote>
-                <div
-                    style="
-                        margin-top: 0.75rem;
-                        text-align: right;
-                        display: flex;
-                        align-items: center;
-                        justify-content: flex-end;
-                    "
-                >
-                    <img src="/static/quotes/icons/thumb_up.svg" alt="Like"
-                    style="backdrop-filter: blur(2rem);width:
-                    3rem;height:3rem;cursor: pointer;border: solid white
-                    0.1rem;padding:0.4rem;border-radius: 1rem;" width:="">
-                    <span style="margin-left: 0.4rem">15</span>
-                    <img
-                        src="/static/quotes/icons/thumb_down.svg"
-                        alt="Dislike"
-                        style="
-                            backdrop-filter: blur(2rem);
-                            width: 3rem;
-                            height: 3rem;
-                            cursor: pointer;
-                            margin-left: 1rem;
-                            border: solid white 0.1rem;
-                            padding: 0.4rem;
-                            border-radius: 1rem;
-                        "
-                    />
-                    <span style="margin-left: 0.4rem">87</span>
-                </div>
-                {% comment %} {% if score.is_like %}
-                <p>Ваш текущий счёт за эту цитату: {{ score.is_like }}</p>
-                {% else %}
-                <p>Вы ещё не оценивали эту цитату.</p>
-                {% endif %} {% endcomment %} {% endif %}
-            </div>
-
-            <button class="btn" id="showBtn">Узнать сейчас</button>
-        </div>
-
-        <footer>
-            <p style="margin-bottom: 0.25rem; opacity: 0.5">
-                Всего просмотров: {{ total_views }}
+{% extends "quotes/base.html" %} {% block title %}Цитаты - Главная{% endblock %}
+{% block content %}
+<a
+    href="/editor"
+    style="
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10;
+        text-decoration: none;
+    "
+    class="btn-sml"
+    >Редактор цитат</a
+>
+<div class="content-container">
+    <h1 id="question">Какая цитата вдохновит вас сегодня?</h1>
+    <div id="quote">
+        {% if not quote %}
+        <p>
+            Цитат пока нет. Пожалуйста, добавьте первую цитату через редактор.
+        </p>
+        {% else %}
+        <p style="text-align: left; margin: 0.5rem; font-size: 1rem">
+            Источник: {{ quote.source }}
+        </p>
+        <blockquote
+            style="
+                border: white solid 0.1rem;
+                border-radius: 1rem;
+                padding: 1.5rem;
+                backdrop-filter: blur(2rem);
+            "
+        >
+            <p style="font-size: 1.5rem; margin-bottom: 1rem">
+                <i>„{{ quote.text }}“</i>
             </p>
-        </footer>
+            <p style="text-align: right; margin-bottom: 0; opacity: 0.5">
+                — {{ quote.attribution }}
+            </p>
+        </blockquote>
+        <div
+            style="
+                margin-top: 0.75rem;
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            "
+        >
+            <img
+                id="likeBtn"
+                src="/static/quotes/icons/thumb_up.svg"
+                alt="Like"
+                class="btn-reaction"
+            />
+            <span id="likes" style="margin-left: 0.4rem"
+                >{{ quote.likes_count }}</span
+            >
+            <img
+                id="dislikeBtn"
+                src="/static/quotes/icons/thumb_down.svg"
+                alt="Dislike"
+                class="btn-reaction"
+                style="margin-left: 1rem"
+            />
+            <span id="dislikes" style="margin-left: 0.4rem"
+                >{{ quote.dislikes_count }}</span
+            >
+        </div>
+        {% endif %}
+    </div>
 
-        <script>
-            const btn = document.getElementById("showBtn");
-            const quote = document.getElementById("quote");
+    <button class="btn" id="showBtn">Узнать сейчас</button>
+    <div style="margin-top: 1rem">
+        <a style="color: white; text-decoration: none" href="/rating"
+            >Топ 10 лучших цитат</a
+        >
+    </div>
+</div>
 
-            btn.addEventListener("click", () => {
-                btn.classList.add("shrink");
-                setTimeout(() => {
-                    btn.style.display = "none";
-                    quote.classList.add("visible");
-                }, 300);
-            });
-        </script>
+<footer>
+    <p style="margin-bottom: 0.25rem; opacity: 0.5">
+        Всего просмотров: {{ total_views }}
+    </p>
+</footer>
 
-        <script src="{% static 'quotes/scripts/animated_bg.js' %}"></script>
-    </body>
-</html>
+<script>
+    const btn = document.getElementById("showBtn");
+    const quote = document.getElementById("quote");
+    const likeBtn = document.getElementById("likeBtn");
+    const dislikeBtn = document.getElementById("dislikeBtn");
+
+    const likesSpan = document.getElementById("likes");
+    const dislikesSpan = document.getElementById("dislikes");
+
+    let reaction = {% if reaction %}"{{ reaction }}"{% else %}null{% endif %};
+    let likesCount = {{ quote.likes_count }};
+    let dislikesCount = {{ quote.dislikes_count }};
+
+    btn.addEventListener("click", () => {
+        btn.classList.add("shrink");
+        setTimeout(() => {
+            btn.style.display = "none";
+            quote.classList.add("visible");
+        }, 300);
+    });
+
+    likeBtn.addEventListener("click", () => {
+        react({{ quote.id }}, "like");
+    });
+
+    dislikeBtn.addEventListener("click", () => {
+        react({{ quote.id }}, "dislike");
+    });
+
+    function react(quote_id, reaction_type) {
+        fetch(`/api/quotes/${quote_id}/react/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `type=${encodeURIComponent(reaction_type)}`,
+        })
+        .then(response => response.json())
+        .then(response => {
+            reaction = response.reaction;
+            likesCount = response.likes_count;
+            dislikesCount = response.dislikes_count;
+
+            updateReactionButtons();
+        })
+        .catch(error => {
+            alert("Ошибка при установке оценки.");
+        });
+    }
+
+    function updateReactionButtons() {
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+
+        if (reaction === "like") {
+            likeBtn.style.backgroundColor = "green";
+            dislikeBtn.style.backgroundColor = "transparent";
+        } else if (reaction === "dislike") {
+            dislikeBtn.style.backgroundColor = "red";
+            likeBtn.style.backgroundColor = "transparent";
+        } else {
+            likeBtn.style.backgroundColor = "transparent";
+            dislikeBtn.style.backgroundColor = "transparent";
+        }
+
+        likesSpan.textContent = likesCount;
+        dislikesSpan.textContent = dislikesCount;
+    }
+
+    updateReactionButtons();
+</script>
+{% endblock %}
