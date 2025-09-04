@@ -23,7 +23,7 @@ def index(request: HttpRequest):
         return render(
             request,
             "quotes/index.html",
-            {"quote": None},
+            {"quote": None, "total_views": stats.total_views},
         )
 
     quote = random.choices(quotes, weights=[q.weight for q in quotes], k=1)[0]
@@ -56,7 +56,7 @@ def editor(request: HttpRequest, quote_id: int = None):
         quote = get_object_or_404(Quote, id=quote_id)
     else:
         quote = None
-        
+
     show_form = False
     form_title = "Изменение цитаты"
 
@@ -71,13 +71,22 @@ def editor(request: HttpRequest, quote_id: int = None):
             show_form = True
     else:
         form = QuoteForm(instance=quote)
-        
+
         if quote_id:
             show_form = True
 
     quotes = list(Quote.objects.all())
-    
-    return render(request, "quotes/editor.html", {"quotes": quotes, "form": form, "show_form": show_form, "form_title": form_title})
+
+    return render(
+        request,
+        "quotes/editor.html",
+        {
+            "quotes": quotes,
+            "form": form,
+            "show_form": show_form,
+            "form_title": form_title,
+        },
+    )
 
 
 @csrf_exempt

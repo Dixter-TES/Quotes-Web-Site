@@ -94,8 +94,8 @@
     const dislikesSpan = document.getElementById("dislikes");
 
     let reaction = {% if reaction %}"{{ reaction }}"{% else %}null{% endif %};
-    let likesCount = {{ quote.likes_count }};
-    let dislikesCount = {{ quote.dislikes_count }};
+    let likesCount = {{ quote.likes_count|default:0 }};
+    let dislikesCount = {{ quote.dislikes_count|default:0 }};
 
     btn.addEventListener("click", () => {
         btn.classList.add("shrink");
@@ -104,15 +104,7 @@
             quote.classList.add("visible");
         }, 300);
     });
-
-    likeBtn.addEventListener("click", () => {
-        react({{ quote.id }}, "like");
-    });
-
-    dislikeBtn.addEventListener("click", () => {
-        react({{ quote.id }}, "dislike");
-    });
-
+    
     function react(quote_id, reaction_type) {
         fetch(`/api/quotes/${quote_id}/react/`, {
             method: "POST",
@@ -135,9 +127,6 @@
     }
 
     function updateReactionButtons() {
-        const likeBtn = document.getElementById('likeBtn');
-        const dislikeBtn = document.getElementById('dislikeBtn');
-
         if (reaction === "like") {
             likeBtn.style.backgroundColor = "green";
             dislikeBtn.style.backgroundColor = "transparent";
@@ -153,6 +142,16 @@
         dislikesSpan.textContent = dislikesCount;
     }
 
-    updateReactionButtons();
+    if (likeBtn && dislikeBtn) {
+        likeBtn.addEventListener("click", () => {
+            react({{ quote.id|default:0 }}, "like");
+        });
+
+        dislikeBtn.addEventListener("click", () => {
+            react({{ quote.id|default:0 }}, "dislike");
+        });
+
+        updateReactionButtons();
+    }
 </script>
 {% endblock %}
